@@ -1,0 +1,66 @@
+<form class="reserva" [formGroup]="form" (ngSubmit)="reservar()">
+  <h2>Reservar sala</h2>
+
+  <div class="campo">
+    <label for="codigoSala">Código da sala</label>
+    <input id="codigoSala" type="text" formControlName="codigoSala" placeholder="AZ-101" autocomplete="off" />
+    @if (form.controls.codigoSala.touched && form.controls.codigoSala.hasError('formatoCodigoSala')) {
+      <p class="erro">Use duas letras maiúsculas, hífen e três dígitos.</p>
+    }
+  </div>
+
+  <div class="sala" aria-live="polite">
+    @if (sala(); as sala) {
+      <p class="sala-dados">{{ sala.nome }} — capacidade para {{ sala.capacidade }} pessoas</p>
+    } @else if (consultandoSala()) {
+      <p class="sala-consultando">Consultando sala…</p>
+    } @else if (salaNaoEncontrada()) {
+      <p class="erro">Sala não encontrada.</p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="data">Data</label>
+    <input id="data" type="date" formControlName="data" [min]="hoje" />
+  </div>
+
+  <div class="campo">
+    <label for="horarioInicio">Horário de início</label>
+    <input id="horarioInicio" type="time" formControlName="horarioInicio" />
+    @if (form.controls.horarioInicio.touched && form.controls.horarioInicio.hasError('horarioNaoPermitido')) {
+      <p class="erro">As reuniões podem começar entre 07h00 e 19h59.</p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="duracaoMinutos">Duração</label>
+    <select id="duracaoMinutos" formControlName="duracaoMinutos">
+      @for (duracao of duracoes; track duracao) {
+        <option [ngValue]="duracao">{{ duracao }} minutos</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="participantes">Participantes</label>
+    <input id="participantes" type="number" min="1" formControlName="participantes" />
+    @if (form.controls.participantes.hasError('participantesInvalidos')) {
+      <p class="erro">Informe pelo menos um participante.</p>
+    }
+    @if (form.hasError('capacidadeExcedida')) {
+      <p class="erro">O número de participantes passa da capacidade da sala.</p>
+    }
+    @if (exigeAprovacaoGestor()) {
+      <p class="aviso">Esta reunião precisa de aprovação do gestor.</p>
+    }
+  </div>
+
+  <button type="submit" [disabled]="form.invalid && !enviando()">Reservar</button>
+
+  @if (reservaConfirmada()) {
+    <p class="sucesso">Reserva enviada.</p>
+  }
+  @if (erroEnvio()) {
+    <p class="erro">Não foi possível concluir a reserva. Tente novamente.</p>
+  }
+</form>
