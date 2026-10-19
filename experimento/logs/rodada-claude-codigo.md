@@ -1,4 +1,4 @@
-Date: 2024-06-19 15:15:00
+Date: 2026-10-19 15:16:03
 Model: Default (Opus 5.5 · Best for everyday, complex tasks)
 
 I added three spec files and ran them with the project's existing Jest setup. The suite is stable: 96 tests, 85 passing and 11 failing, with the same 11 failures on every run. I ran it 3 times normally and once with --runInBand --no-cache --randomize. I looked at each failure and all 11 come from the production code, so I left the tests as they are. Only the three new .spec.ts files were created; nothing else changed.
